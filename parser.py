@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from lxml import html
 import re
 import time
+import logging
 
 
 class Views:
@@ -39,18 +40,29 @@ class Views:
     def views(self):
         counter: int = 0
         for link in self.links():
-            req = requests.get(link).text
-            soup = BeautifulSoup(req,'lxml')
-            count_of_views = str(soup.find('span', {'class': "post-views-count"}))
-            result = re.findall(r'\d+', count_of_views)
-            if len(result) != 0:
-                if len(result) < 2:
-                    self.list_of_views.append(int(result[0]))
-                else:
-                    self.list_of_views.append(int(result[0] + result[1]))
-            counter += 1
-            if counter <= 3:
-                time.sleep(3)
+            while True:
+                try:
+                    r = requests.get(link)
+                    if r.status_code != 200:
+                        logging.info("Ошибка, Код ответа: %s", r.status)
+                        time.sleep(1)
+                        continue
+                    req = r.text
+                    soup = BeautifulSoup(req,'lxml')
+                    count_of_views = str(soup.find('span', {'class': "post-views-count"}))
+                    result = re.findall(r'\d+', count_of_views)
+                    if len(result) != 0:
+                        if len(result) < 2:
+                            self.list_of_views.append(int(result[0]))
+                        else:
+                            self.list_of_views.append(int(result[0] + result[1]))
+                    counter += 1
+                    print('!'*20, "counter:", counter, '!'*20, r.status_code)
+                    if counter == len(self.list_of_links):
+                        break
+                except Exception as e:
+                    print(type(e), '\nstatus code: ',r.status_code)
+                    time.sleep(1)
         return self.list_of_views
 
     def author(self):
