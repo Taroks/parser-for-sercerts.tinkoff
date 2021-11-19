@@ -66,30 +66,3 @@ class Views:
                 else: #для остальным чисел 
                     self.list_of_views.append(int(result[0] + result[1]))
         return [self.list_of_views, self.list_of_authors]
-
-    # def author(self): #функция парсинга авторов
-    #     print ( '_'* 70,'function author','_'*69)
-    #     a = 0
-    #     for link in self.list_of_links:
-    #         r = self.connection(link)
-    #         req = r.text
-    #         soup = BeautifulSoup(req,'lxml')
-    #         author_str = str(soup.find('span', {'class': "details__editor"})) #так парсится куском, то регулярками вычищаем нужное
-    #         left_author = re.split(r'>', author_str)
-    #         only_author = re.split(r'<', left_author[1])
-    #         self.list_of_authors.append(only_author[0])
-    #     return self.list_of_authors
-
-
-
-
-
-        
-
-        
-
-# чтобы можно было проверить только этот модуль:
-# check = Views()
-# links = check.views()
-# authors = check.author()
-# print(links, '\n', len(links), "\n", authors, len(authors))
